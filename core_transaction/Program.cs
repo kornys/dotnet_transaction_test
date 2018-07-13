@@ -16,6 +16,9 @@ namespace core_transactions
             String url = (args.Length > 0) ? args[0] : "amqp://127.0.0.1:5672";
             String destination = (args.Length > 1) ? args[1] : "myqueue";
 
+            Trace.TraceLevel = TraceLevel.Frame;
+            Trace.TraceListener = (l, f, a) => Console.WriteLine(
+                    DateTime.Now.ToString("[hh:mm:ss.fff]") + " " + string.Format(f, a));
 
             Address address = new Address(url);
             string testName = "TransactedPosting";
