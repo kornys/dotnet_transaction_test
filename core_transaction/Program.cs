@@ -13,14 +13,17 @@ namespace core_transactions
     {
         public static void Main(string[] args)
         {
-            Address address = new Address("amqp://admin:admin@10.37.144.50:5672");
-            string queue = "myqueue";
+            String url = (args.Length > 0) ? args[0] : "amqp://127.0.0.1:5672";
+            String destination = (args.Length > 1) ? args[1] : "myqueue";
+
+
+            Address address = new Address(url);
             string testName = "TransactedPosting";
             int nMsgs = 5;
 
             Connection connection = new Connection(address);
             Session session = new Session(connection);
-            SenderLink sender = new SenderLink(session, "sender-" + testName, queue);
+            SenderLink sender = new SenderLink(session, "sender-" + testName, destination);
 
             // commit
             using (var ts = new TransactionScope())
@@ -63,7 +66,7 @@ namespace core_transactions
             Console.WriteLine("Commit");
 
             //receive
-            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, queue);
+            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, destination);
             for (int i = 0; i < nMsgs * 2; i++)
             {
                 Message message = receiver.Receive();
